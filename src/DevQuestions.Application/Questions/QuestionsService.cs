@@ -35,7 +35,7 @@ public class QuestionsService : IQuestionsService
         var validationResult = await _validator.ValidateAsync(questionDto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            throw new QuestionValidationException(validationResult.ToErrors());
+                throw new QuestionValidationException(validationResult.ToErrors());
         }
 
         // валидация бизнес логики
