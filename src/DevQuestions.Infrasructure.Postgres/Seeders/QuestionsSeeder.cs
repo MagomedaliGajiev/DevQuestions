@@ -1,19 +1,16 @@
-﻿using DevQuestions.Infrastructure.Postgres;
+﻿namespace DevQuestions.Infrasructure.Postgres.Seeders;
 
-namespace DevQuestions.Infrasructure.Postgres.Seeders
+public class QuestionsSeeder : ISeeder
 {
-    public class QuestionsSeeder : ISeeder
+    private readonly QuestionsDbContext _dbContext;
+
+    public QuestionsSeeder(QuestionsDbContext dbContext)
     {
-        private readonly QuestionsDbContext _dbContext;
+        _dbContext = dbContext;
+    }
 
-        public QuestionsSeeder(QuestionsDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
-        public Task SeedAsync()
-        {
-            throw new NotImplementedException();
-        }
+    public Task SeedAsync()
+    {
+        throw new NotImplementedException();
     }
 }

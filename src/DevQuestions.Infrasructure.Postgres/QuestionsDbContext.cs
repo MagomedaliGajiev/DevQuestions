@@ -1,10 +1,9 @@
 ﻿using DevQuestions.Domain.Questions;
 using Microsoft.EntityFrameworkCore;
 
-namespace DevQuestions.Infrastructure.Postgres
+namespace DevQuestions.Infrasructure.Postgres;
+
+public class QuestionsDbContext : DbContext
 {
-    public class QuestionsDbContext : DbContext
-    {
-        public DbSet<Question> Questions { get; set; }
-    }
+    public DbSet<Question> Questions { get; set; }
 }

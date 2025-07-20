@@ -1,6 +1,6 @@
 ﻿using DevQuestions.Application;
-using DevQuestions.Infrasructure.Postgres;
 using DevQuestions.Infrasructure.ElasticSearch;
+using DevQuestions.Infrasructure.Postgres;
 
 namespace DevQuestions.Web;
 
@@ -12,7 +12,6 @@ public static class DependenceInjection
             .AddApplication()
             .AddPostgresInfrastructure()
             .AddElasticSearchInfrastructure();
-
 
     private static IServiceCollection AddWebDependencies(this IServiceCollection services)
     {

@@ -1,11 +1,10 @@
 ﻿using DevQuestions.Domain.Questions;
 
-namespace DevQuestions.Application.FullTextSearch
-{
-    public interface ISearchProvider
-    {
-        Task<List<Guid>> SearchAsync(string query);
+namespace DevQuestions.Application.FullTextSearch;
 
-        Task IndexQuestionAssync(Question question);
-    }
+public interface ISearchProvider
+{
+    Task<List<Guid>> SearchAsync(string query);
+
+    Task IndexQuestionAssync(Question question);
 }

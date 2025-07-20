@@ -1,5 +1,4 @@
-﻿
-using DevQuestions.Application.FullTextSearch;
+﻿using DevQuestions.Application.FullTextSearch;
 using DevQuestions.Domain.Questions;
 
 namespace DevQuestions.Infrasructure.ElasticSearch;

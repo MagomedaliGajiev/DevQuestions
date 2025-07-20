@@ -1,9 +1,8 @@
 ﻿using System.Data;
 
-namespace DevQuestions.Application.Database
+namespace DevQuestions.Application.Database;
+
+public interface ISqlConnectionFactory
 {
-    public interface ISqlConnectionFactory
-    {
-        IDbConnection Create();
-    }
+    IDbConnection Create();
 }

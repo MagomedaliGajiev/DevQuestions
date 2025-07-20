@@ -1,17 +1,16 @@
 ﻿using DevQuestions.Contracts.Questions;
 using FluentValidation;
 
-namespace DevQuestions.Application.Questions
+namespace DevQuestions.Application.Questions;
+
+public class CreateQuestionValidator : AbstractValidator<CreateQuestionDto>
 {
-    public class CreateQuestionValidator : AbstractValidator<CreateQuestionDto>
+    public CreateQuestionValidator()
     {
-        public CreateQuestionValidator()
-        {
-            RuleFor(x => x.Title).NotEmpty().MaximumLength(500).WithMessage("Заголовок невалидный.");
+        RuleFor(x => x.Title).NotEmpty().MaximumLength(500).WithMessage("Заголовок невалидный.");
 
-            RuleFor(x => x.Text).NotEmpty().MaximumLength(5000).WithMessage("Заголовок невалидный.");
+        RuleFor(x => x.Text).NotEmpty().MaximumLength(5000).WithMessage("Заголовок невалидный.");
 
-            RuleFor(x => x.UserId).NotEmpty();
-        }
+        RuleFor(x => x.UserId).NotEmpty();
     }
 }

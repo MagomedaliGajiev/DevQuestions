@@ -1,7 +1,6 @@
-﻿namespace DevQuestions.Infrasructure.Postgres.Seeders
+﻿namespace DevQuestions.Infrasructure.Postgres.Seeders;
+
+public interface ISeeder
 {
-    public interface ISeeder
-    {
-        Task SeedAsync();
-    }
+    Task SeedAsync();
 }

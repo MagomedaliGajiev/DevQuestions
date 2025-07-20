@@ -1,24 +1,23 @@
-﻿using DevQuestions.Application.Database;
+﻿using System.Data;
+using DevQuestions.Application.Database;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
-using System.Data;
 
-namespace DevQuestions.Infrasructure.Postgres
+namespace DevQuestions.Infrasructure.Postgres;
+
+public class SqlConnectionFactory : ISqlConnectionFactory
 {
-    public class SqlConnectionFactory : ISqlConnectionFactory
+    private readonly IConfiguration _configuration;
+
+    public SqlConnectionFactory(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
+        _configuration = configuration;
+    }
 
-        public SqlConnectionFactory(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+    public IDbConnection Create()
+    {
+        var connection = new NpgsqlConnection(_configuration.GetConnectionString("Database"));
 
-        public IDbConnection Create()
-        {
-            var connection = new NpgsqlConnection(_configuration.GetConnectionString("Database"));
-
-            return connection;
-        }
+        return connection;
     }
 }

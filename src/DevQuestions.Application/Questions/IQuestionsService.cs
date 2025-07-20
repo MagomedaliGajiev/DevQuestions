@@ -1,9 +1,8 @@
 ﻿using DevQuestions.Contracts.Questions;
 
-namespace DevQuestions.Application.Questions
+namespace DevQuestions.Application.Questions;
+
+public interface IQuestionsService
 {
-    public interface IQuestionsService
-    {
-        Task<Guid> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken);
-    }
+    Task<Guid> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken);
 }
