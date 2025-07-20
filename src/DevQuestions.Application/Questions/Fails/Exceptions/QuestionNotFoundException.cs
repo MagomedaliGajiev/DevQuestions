@@ -5,8 +5,8 @@ namespace DevQuestions.Application.Questions.Fails.Exceptions;
 
 public class QuestionNotFoundException : NotFoundException
 {
-    public QuestionNotFoundException(Error[] error)
-        : base(error)
+    public QuestionNotFoundException(Error[] errors)
+        : base(errors)
     {
     }
 }

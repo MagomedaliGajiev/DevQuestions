@@ -2,13 +2,17 @@
 
 public record Error
 {
-    public string Code { get; }
+    public string Code { get; init;  }
 
-    public string Message { get; }
+    public string Message { get; init;  }
 
-    public ErrorType Type { get; }
+    public ErrorType Type { get; init; }
 
-    public string? InvalidField { get; }
+    public string? InvalidField { get; init; }
+
+    public Error()
+    {
+    }
 
     private Error(string code, string message, ErrorType type, string? invalidField = null)
     {
@@ -37,14 +41,17 @@ public enum ErrorType
     /// Ошибка с валидацией.
     /// </summary>
     VALIDATION,
+
     /// <summary>
     /// Ошибка ничего не найдено.
     /// </summary>
     NOT_FOUND,
+
     /// <summary>
     /// Ошибка сервера.
     /// </summary>
     FAILURE,
+
     /// <summary>
     /// Ошибка конфликт.
     /// </summary>

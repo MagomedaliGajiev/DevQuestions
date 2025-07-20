@@ -1,6 +1,6 @@
-﻿using DevQuestions.Application.Exceptions;
+﻿using System.Text.Json;
+using DevQuestions.Application.Exceptions;
 using Shared;
-using System.Text.Json;
 
 namespace DevQuestions.Web.Middlewares;
 
@@ -22,7 +22,7 @@ public class ExceptionMiddleware
             await _next(httpContext);
         }
         catch (Exception ex)
-        {
+            {
             await HandleExceptionAsync(httpContext, ex);
         }
     }

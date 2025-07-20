@@ -38,19 +38,24 @@ public class QuestionsService : IQuestionsService
                 throw new QuestionValidationException(validationResult.ToErrors());
         }
 
+        var calculator = new QuestionCalculataor();
+
+        calculator.Calculate();
+
         // валидация бизнес логики
         int openUserQuestionsCount = await _questionsRepository
             .GetOpenUserQuestionsAsync(questionDto.UserId, cancellationToken);
-
-        var existedQuestion = await _questionsRepository.GetByIdAsync(Guid.Empty, cancellationToken);
 
         if (openUserQuestionsCount > 3)
         {
             throw new TooManyQuestionsException();
         }
 
+        var existedQuestion = await _questionsRepository.GetByIdAsync(Guid.Empty, cancellationToken);
+
         // создание сущности Question
         var questionId = Guid.NewGuid();
+
         var question = new Question(
              questionId,
              questionDto.Title,
@@ -100,4 +105,12 @@ public class QuestionsService : IQuestionsService
     //{
 
     //}
+}
+
+public class QuestionCalculataor
+{
+    public void Calculate()
+    {
+        throw new NotImplementedException();
+    }
 }
