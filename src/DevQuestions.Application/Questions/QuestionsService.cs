@@ -1,4 +1,5 @@
-﻿using DevQuestions.Contracts.Questions;
+﻿using DevQuestions.Application.FullTextSearch;
+using DevQuestions.Contracts.Questions;
 using DevQuestions.Domain.Questions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -8,17 +9,20 @@ namespace DevQuestions.Application.Questions
     public class QuestionsService : IQuestionsService
     {
         private readonly IQuestionsRepository _questionsRepository;
+        private readonly ISearchProvider _searchProvider;
         private readonly ILogger<QuestionsService> _logger;
         private readonly IValidator<CreateQuestionDto> _validator;
 
         public QuestionsService(
             IQuestionsRepository questionsRepository,
-            ILogger<QuestionsService> logger,
-            IValidator<CreateQuestionDto> validator)
+            IValidator<CreateQuestionDto> validator,
+            ISearchProvider searchProvider,
+            ILogger<QuestionsService> logger)
         {
             _questionsRepository = questionsRepository;
             _logger = logger;
             _validator = validator;
+            _searchProvider = searchProvider;
         }
 
         public async Task<Guid> Create(
@@ -35,6 +39,8 @@ namespace DevQuestions.Application.Questions
             // валидация бизнес логики
             int openUserQuestionsCount = await _questionsRepository
                 .GetOpenUserQuestionsAsync(questionDto.UserId, cancellationToken);
+
+            var existedQuestion = await _questionsRepository.GetByIdAsync(Guid.Empty, cancellationToken);
 
             if (openUserQuestionsCount > 3)
             {
@@ -53,6 +59,8 @@ namespace DevQuestions.Application.Questions
 
             // сохранение сущности Question в базе данных
             await _questionsRepository.AddAsync(question, cancellationToken);
+
+            await _searchProvider.IndexQuestionAssync(question);
 
             // Логирование об успешном не успешном сохранение данных
             _logger.LogInformation("Question created with id {questionId}", questionId);
