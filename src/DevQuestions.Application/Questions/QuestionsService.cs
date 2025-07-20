@@ -1,4 +1,6 @@
-﻿using DevQuestions.Application.FullTextSearch;
+﻿using DevQuestions.Application.Extensions;
+using DevQuestions.Application.FullTextSearch;
+using DevQuestions.Application.Questions.Fails.Exceptions;
 using DevQuestions.Contracts.Questions;
 using DevQuestions.Domain.Questions;
 using FluentValidation;
@@ -33,7 +35,7 @@ public class QuestionsService : IQuestionsService
         var validationResult = await _validator.ValidateAsync(questionDto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            throw new ValidationException(validationResult.Errors);
+            throw new QuestionValidationException(validationResult.ToErrors());
         }
 
         // валидация бизнес логики
@@ -44,7 +46,7 @@ public class QuestionsService : IQuestionsService
 
         if (openUserQuestionsCount > 3)
         {
-            throw new Exception("Пользователь не может создать больше 3 вопросов");
+            throw new TooManyQuestionsException();
         }
 
         // создание сущности Question
