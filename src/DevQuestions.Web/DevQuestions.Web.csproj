@@ -14,6 +14,8 @@
   <ItemGroup>
     <ProjectReference Include="..\DevQuestions.Application\DevQuestions.Application.csproj" />
     <ProjectReference Include="..\DevQuestions.Domain\DevQuestions.Domain.csproj" />
+    <ProjectReference Include="..\DevQuestions.Infrasructure.ElasticSearch\DevQuestions.Infrasructure.ElasticSearch.csproj" />
+    <ProjectReference Include="..\DevQuestions.Infrasructure.Postgres\DevQuestions.Infrasructure.Postgres.csproj" />
     <ProjectReference Include="..\DevQuestions.Presenters\DevQuestions.Presenters.csproj" />
   </ItemGroup>
 

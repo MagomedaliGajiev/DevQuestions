@@ -1,21 +1,24 @@
 ﻿using DevQuestions.Application;
+using DevQuestions.Infrasructure.Postgres;
+using DevQuestions.Infrasructure.ElasticSearch;
 
-namespace DevQuestions.Web
+namespace DevQuestions.Web;
+
+public static class DependenceInjection
 {
-    public static class DependenceInjection
+    public static IServiceCollection AddProgramDependencies(this IServiceCollection services) =>
+        services
+            .AddWebDependencies()
+            .AddApplication()
+            .AddPostgresInfrastructure()
+            .AddElasticSearchInfrastructure();
+
+
+    private static IServiceCollection AddWebDependencies(this IServiceCollection services)
     {
-        public static IServiceCollection AddProgramDependencies(this IServiceCollection services) =>
-            services
-                .AddWebDependencies()
-                .AddApplication();
- 
+        services.AddControllers();
+        services.AddOpenApi();
 
-        private static IServiceCollection AddWebDependencies(this IServiceCollection services)
-        {
-            services.AddControllers();
-            services.AddOpenApi();
-
-            return services;
-        }
+        return services;
     }
 }

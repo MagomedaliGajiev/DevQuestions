@@ -14,7 +14,7 @@ public class Question
         Title = title;
         Text = text;
         UserId = userId;
-        ScreenShotId = screenShotId;
+        ScreenshotId = screenShotId;
         Tags = tags.ToList();
     }
 
@@ -26,7 +26,7 @@ public class Question
 
     public Guid UserId { get; set; }
 
-    public Guid? ScreenShotId { get; set; }
+    public Guid? ScreenshotId { get; set; }
 
     public List<Answer> Answers { get; set; } = [];
 
