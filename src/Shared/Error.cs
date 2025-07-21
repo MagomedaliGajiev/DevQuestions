@@ -1,19 +1,19 @@
-﻿namespace Shared;
+﻿using System.Text.Json.Serialization;
+
+namespace Shared;
 
 public record Error
 {
-    public string Code { get; init;  }
+    public string Code { get; }
 
-    public string Message { get; init;  }
+    public string Message { get; }
 
-    public ErrorType Type { get; init; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public ErrorType Type { get; }
 
-    public string? InvalidField { get; init; }
+    public string? InvalidField { get; }
 
-    public Error()
-    {
-    }
-
+    [JsonConstructor]
     private Error(string code, string message, ErrorType type, string? invalidField = null)
     {
         Code = code;
