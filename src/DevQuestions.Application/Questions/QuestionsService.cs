@@ -1,4 +1,6 @@
-﻿using DevQuestions.Application.FullTextSearch;
+﻿using DevQuestions.Application.Extensions;
+using DevQuestions.Application.FullTextSearch;
+using DevQuestions.Application.Questions.Fails.Exceptions;
 using DevQuestions.Contracts.Questions;
 using DevQuestions.Domain.Questions;
 using FluentValidation;
@@ -33,22 +35,27 @@ public class QuestionsService : IQuestionsService
         var validationResult = await _validator.ValidateAsync(questionDto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            throw new ValidationException(validationResult.Errors);
+                throw new QuestionValidationException(validationResult.ToErrors());
         }
+
+        var calculator = new QuestionCalculataor();
+
+        calculator.Calculate();
 
         // валидация бизнес логики
         int openUserQuestionsCount = await _questionsRepository
             .GetOpenUserQuestionsAsync(questionDto.UserId, cancellationToken);
 
-        var existedQuestion = await _questionsRepository.GetByIdAsync(Guid.Empty, cancellationToken);
-
         if (openUserQuestionsCount > 3)
         {
-            throw new Exception("Пользователь не может создать больше 3 вопросов");
+            throw new TooManyQuestionsException();
         }
+
+        var existedQuestion = await _questionsRepository.GetByIdAsync(Guid.Empty, cancellationToken);
 
         // создание сущности Question
         var questionId = Guid.NewGuid();
+
         var question = new Question(
              questionId,
              questionDto.Title,
@@ -98,4 +105,12 @@ public class QuestionsService : IQuestionsService
     //{
 
     //}
+}
+
+public class QuestionCalculataor
+{
+    public void Calculate()
+    {
+        throw new NotImplementedException();
+    }
 }
