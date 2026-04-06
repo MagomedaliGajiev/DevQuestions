@@ -6,7 +6,7 @@ public class Answer
 
     public required Guid UserId { get; set; }
 
-    public required string Text { get; set; } 
+    public required string Text { get; set; }
 
     public required Question Question { get; set; }
 

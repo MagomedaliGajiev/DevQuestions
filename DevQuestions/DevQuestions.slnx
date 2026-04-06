@@ -4,6 +4,7 @@
     <File Path="Directory.Build.props" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/DevQuestions.Application/DevQuestions.Application.csproj" />
     <Project Path="src/DevQuestions.Contracts/DevQuestions.Contracts.csproj" />
     <Project Path="src/DevQuestions.Domain/DevQuestions.Domain.csproj" />
     <Project Path="src/DevQuestions.Presenters/DevQuestions.Presenters.csproj" />

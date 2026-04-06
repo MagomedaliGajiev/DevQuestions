@@ -7,17 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DevQuestions.Application\DevQuestions.Application.csproj" />
       <ProjectReference Include="..\DevQuestions.Contracts\DevQuestions.Contracts.csproj" />
       <ProjectReference Include="..\DevQuestions.Domain\DevQuestions.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.9" />
+      <Folder Include="Comments\" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Comments\" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿namespace DevQuestions.Domain.Reports;
 
-public enum Status
+public enum ReportStatus
 {
     /// <summary>
     /// Статус открыт.
