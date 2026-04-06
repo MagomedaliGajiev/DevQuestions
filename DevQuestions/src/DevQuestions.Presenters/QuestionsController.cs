@@ -1,4 +1,3 @@
-using DevQuestions.Contracts;
 using DevQuestions.Contracts.Questions;
 using Microsoft.AspNetCore.Mvc;
 
