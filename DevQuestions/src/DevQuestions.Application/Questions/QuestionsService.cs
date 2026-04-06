@@ -1,4 +1,5 @@
-﻿using DevQuestions.Contracts.Questions;
+﻿using DevQuestions.Application.FullTextSearch;
+using DevQuestions.Contracts.Questions;
 using DevQuestions.Domain.Questions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -9,15 +10,18 @@ public class QuestionsService : IQuestionsService
 {
     private readonly IQuestionsRepository _questionsRepository;
     private readonly IValidator<CreateQuestionDto> _validator;
+    private readonly ISearchProvider _searchProvider;
     private readonly ILogger<QuestionsService> _logger;
 
     public QuestionsService(
         IQuestionsRepository questionsRepository,
         IValidator<CreateQuestionDto> validator,
+        ISearchProvider searchProvider,
         ILogger<QuestionsService> logger)
     {
         _questionsRepository = questionsRepository;
         _logger = logger;
+        _searchProvider = searchProvider;
         _validator = validator;
     }
 
@@ -51,6 +55,8 @@ public class QuestionsService : IQuestionsService
 
         // Сохранение сущности Question в базе данных
         await _questionsRepository.AddAsync(question, cancellationToken);
+
+        await _searchProvider.IndexQuestionAsync(question);
 
         // Логировние об успешном неуспешном схранении
         _logger.LogInformation("Question created with id {questionId}", questionId);

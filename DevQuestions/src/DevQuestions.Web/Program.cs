@@ -1,5 +1,6 @@
 using DevQuestions.Infrastructure.Postgres;
 using DevQuestions.Web;
+using DevQuestions.Web.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,14 +15,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
-
-using var scope = app.Services.CreateAsyncScope();
-
-var seeders = scope.ServiceProvider.GetServices<ISeeder>();
-
-foreach (var seeder in seeders)
-{
-    await seeder.SeedAsync();
-}
 
 app.Run();
