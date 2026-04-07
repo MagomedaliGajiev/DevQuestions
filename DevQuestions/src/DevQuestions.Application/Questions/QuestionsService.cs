@@ -1,8 +1,12 @@
-﻿using DevQuestions.Application.FullTextSearch;
+﻿using DevQuestions.Application.Extensions;
+using DevQuestions.Application.FullTextSearch;
+using DevQuestions.Application.Questions.Fails;
+using DevQuestions.Application.Questions.Fails.Exceptions;
 using DevQuestions.Contracts.Questions;
 using DevQuestions.Domain.Questions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
+using Shared;
 
 namespace DevQuestions.Application.Questions;
 
@@ -31,7 +35,7 @@ public class QuestionsService : IQuestionsService
         var validationResult = await _validator.ValidateAsync(questionDto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            throw new ValidationException(validationResult.Errors);
+            throw new QuestionValidationException(validationResult.ToErrors());
         }
 
         // Валидация бизнес логики
@@ -40,7 +44,7 @@ public class QuestionsService : IQuestionsService
 
         if (openedUserQuestionsCount > 3)
         {
-            throw new Exception("Ползователль не может открыть больше 3 вопросов.");
+            throw new ToManyQuestionsException();
         }
 
         // Создание сущнноости Question
