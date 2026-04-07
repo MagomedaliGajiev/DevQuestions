@@ -1,6 +1,4 @@
-using DevQuestions.Infrastructure.Postgres;
 using DevQuestions.Web;
-using DevQuestions.Web.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 

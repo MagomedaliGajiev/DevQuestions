@@ -2,8 +2,6 @@
 using DevQuestions.Application.Database;
 using DevQuestions.Application.Questions;
 using DevQuestions.Domain.Questions;
-using Microsoft.Extensions.Configuration;
-using Npgsql;
 
 namespace DevQuestions.Infrastructure.Postgres.Repositories;
 

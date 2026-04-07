@@ -1,7 +1,6 @@
 ﻿using DevQuestions.Application.Questions;
 using DevQuestions.Domain.Questions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace DevQuestions.Infrastructure.Postgres.Repositories;
 
