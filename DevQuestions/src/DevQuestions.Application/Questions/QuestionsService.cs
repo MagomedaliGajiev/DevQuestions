@@ -1,6 +1,6 @@
-﻿using DevQuestions.Application.Extensions;
+﻿using CSharpFunctionalExtensions;
+using DevQuestions.Application.Extensions;
 using DevQuestions.Application.FullTextSearch;
-using DevQuestions.Application.Questions.Fails;
 using DevQuestions.Application.Questions.Fails.Exceptions;
 using DevQuestions.Contracts.Questions;
 using DevQuestions.Domain.Questions;
@@ -29,13 +29,21 @@ public class QuestionsService : IQuestionsService
         _validator = validator;
     }
 
-    public async Task<Guid> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken)
+    public async Task<Result<Guid, Error[]>> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken)
     {
         // Валидация входных данных
         var validationResult = await _validator.ValidateAsync(questionDto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            throw new QuestionValidationException(validationResult.ToErrors());
+            validationResult.ToErrors();
+        }
+
+        var calculator = new QuestionCalculator();
+
+        var calculateResult = calculator.Calculate();
+        if (calculateResult.IsFailure)
+        {
+            return new[] { calculateResult.Error, };
         }
 
         // Валидация бизнес логики
@@ -96,4 +104,13 @@ public class QuestionsService : IQuestionsService
     // {
     //
     // }
+}
+
+public class QuestionCalculator
+{
+    public Result<int, Error> Calculate()
+    {
+        // operation
+        return Error.Failure("", "");
+    }
 }
