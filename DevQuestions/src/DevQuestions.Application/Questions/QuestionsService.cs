@@ -29,7 +29,7 @@ public class QuestionsService : IQuestionsService
         _validator = validator;
     }
 
-    public async Task<Result<Guid, Error[]>> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken)
+    public async Task<Result<Guid, Failure>> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken)
     {
         // Валидация входных данных
         var validationResult = await _validator.ValidateAsync(questionDto, cancellationToken);
@@ -43,7 +43,7 @@ public class QuestionsService : IQuestionsService
         var calculateResult = calculator.Calculate();
         if (calculateResult.IsFailure)
         {
-            return new[] { calculateResult.Error, };
+            return calculateResult.Error.ToFailure();
         }
 
         // Валидация бизнес логики

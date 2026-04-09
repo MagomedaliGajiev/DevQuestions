@@ -6,5 +6,5 @@ namespace DevQuestions.Application.Questions;
 
 public interface IQuestionsService
 {
-    Task<Result<Guid, Error[]>> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken);
+    Task<Result<Guid, Failure>> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken);
 }
