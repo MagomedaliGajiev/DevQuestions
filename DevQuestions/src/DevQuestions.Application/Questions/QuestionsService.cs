@@ -35,7 +35,9 @@ public class QuestionsService : IQuestionsService
         var validationResult = await _validator.ValidateAsync(questionDto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            validationResult.ToErrors();
+            _logger.LogWarning("Validation failed for question creation by user {UserId}. Errors: {Errors}",
+                questionDto.UserId, string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+            return validationResult.ToErrors();
         }
 
         var calculator = new QuestionCalculator();
@@ -43,6 +45,7 @@ public class QuestionsService : IQuestionsService
         var calculateResult = calculator.Calculate();
         if (calculateResult.IsFailure)
         {
+            _logger.LogError("Calculation failed for question creation by user {UserId}", questionDto.UserId);
             return calculateResult.Error;
         }
 
@@ -52,10 +55,12 @@ public class QuestionsService : IQuestionsService
 
         if (openedUserQuestionsCount > 3)
         {
+            _logger.LogWarning("User {UserId} has too many open questions ({Count}). Maximum allowed is 3",
+                questionDto.UserId, openedUserQuestionsCount);
             return Errors.Questions.ToManyQuestions().ToFailure();
         }
 
-        // Создание сущнноости Question
+        // Создание сущности Question
         var questionId = Guid.NewGuid();
 
         var question = new Question(
@@ -65,31 +70,13 @@ public class QuestionsService : IQuestionsService
             questionDto.UserId,
             null,
             questionDto.TagIds);
-
-        // Сохранение сущности Question в базе данных
         await _questionsRepository.AddAsync(question, cancellationToken);
-        
 
-        var indexResult = await _searchProvider.IndexQuestionAsync(question);
-        if (indexResult.IsFailure)
-        {
-            return indexResult.Error;
-        }
-
-        // Логировние об успешном неуспешном схранении
         _logger.LogInformation("Question created with id {questionId}", questionId);
 
         return questionId;
     }
 
-    // public async Task<IActionResult> Update(
-    //     Guid questionId,
-    //     UpdateQuestionDto request,
-    //     CancellationToken cancellationToken)
-    // {
-    //
-    // }
-    //
     // public async Task<IActionResult> Delete(Guid questionId, CancellationToken cancellationToken)
     // {
     //
@@ -113,10 +100,10 @@ public class QuestionsService : IQuestionsService
 }
 
 public class QuestionCalculator
-{
-    public UnitResult<Failure> Calculate()
     {
-        // operation
-        return Error.Failure("", "").ToFailure();
+        public Result<int, Failure> Calculate()
+        {
+            // operation
+            return Error.Failure("", "").ToFailure();
+        }
     }
-}
