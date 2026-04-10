@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DevQuestions.Application.Extensions;
 using DevQuestions.Application.FullTextSearch;
-using DevQuestions.Application.Questions.Fails.Exceptions;
+using DevQuestions.Application.Questions.Fails;
 using DevQuestions.Contracts.Questions;
 using DevQuestions.Domain.Questions;
 using FluentValidation;
@@ -43,7 +43,7 @@ public class QuestionsService : IQuestionsService
         var calculateResult = calculator.Calculate();
         if (calculateResult.IsFailure)
         {
-            return calculateResult.Error.ToFailure();
+            return calculateResult.Error;
         }
 
         // Валидация бизнес логики
@@ -52,11 +52,12 @@ public class QuestionsService : IQuestionsService
 
         if (openedUserQuestionsCount > 3)
         {
-            throw new ToManyQuestionsException();
+            return Errors.Questions.ToManyQuestions().ToFailure();
         }
 
         // Создание сущнноости Question
         var questionId = Guid.NewGuid();
+
         var question = new Question(
             questionId,
             questionDto.Title,
@@ -67,8 +68,13 @@ public class QuestionsService : IQuestionsService
 
         // Сохранение сущности Question в базе данных
         await _questionsRepository.AddAsync(question, cancellationToken);
+        
 
-        await _searchProvider.IndexQuestionAsync(question);
+        var indexResult = await _searchProvider.IndexQuestionAsync(question);
+        if (indexResult.IsFailure)
+        {
+            return indexResult.Error;
+        }
 
         // Логировние об успешном неуспешном схранении
         _logger.LogInformation("Question created with id {questionId}", questionId);
@@ -108,9 +114,9 @@ public class QuestionsService : IQuestionsService
 
 public class QuestionCalculator
 {
-    public Result<int, Error> Calculate()
+    public UnitResult<Failure> Calculate()
     {
         // operation
-        return Error.Failure("", "");
+        return Error.Failure("", "").ToFailure();
     }
 }
