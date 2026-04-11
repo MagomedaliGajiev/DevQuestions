@@ -1,4 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
+using DevQuestions.Application.Communication;
+using DevQuestions.Application.Database;
 using DevQuestions.Application.Extensions;
 using DevQuestions.Application.FullTextSearch;
 using DevQuestions.Application.Questions.Fails;
@@ -13,26 +15,30 @@ namespace DevQuestions.Application.Questions;
 public class QuestionsService : IQuestionsService
 {
     private readonly IQuestionsRepository _questionsRepository;
-    private readonly IValidator<CreateQuestionDto> _validator;
+    private readonly IValidator<CreateQuestionDto> _createQuestionDtoValidator;
+    private readonly IValidator<AddAnswerDto> _addAnswerDtoValidator;
     private readonly ISearchProvider _searchProvider;
     private readonly ILogger<QuestionsService> _logger;
+    private readonly ITransactionManager _transactionManager;
+    private readonly IUsersCommunicationService _usersCommunicationService;
 
     public QuestionsService(
         IQuestionsRepository questionsRepository,
-        IValidator<CreateQuestionDto> validator,
+        IValidator<CreateQuestionDto> createQuestionDtoValidator,
         ISearchProvider searchProvider,
-        ILogger<QuestionsService> logger)
+        ILogger<QuestionsService> logger, IValidator<AddAnswerDto> addAnswerDtoValidator)
     {
         _questionsRepository = questionsRepository;
         _logger = logger;
         _searchProvider = searchProvider;
-        _validator = validator;
+        _createQuestionDtoValidator = createQuestionDtoValidator;
+        _addAnswerDtoValidator = addAnswerDtoValidator;
     }
 
     public async Task<Result<Guid, Failure>> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken)
     {
         // Валидация входных данных
-        var validationResult = await _validator.ValidateAsync(questionDto, cancellationToken);
+        var validationResult = await _createQuestionDtoValidator.ValidateAsync(questionDto, cancellationToken);
         if (!validationResult.IsValid)
         {
             _logger.LogWarning("Validation failed for question creation by user {UserId}. Errors: {Errors}",
@@ -89,14 +95,50 @@ public class QuestionsService : IQuestionsService
     // {
     //
     // }
-    //
-    // public async Task<IActionResult> AddAnswer(
-    //     Guid questionId,
-    //     AddAnswerDto request,
-    //     CancellationToken cancellationToken)
-    // {
-    //
-    // }
+
+    public async Task<Result<Guid, Failure>> AddAnswer(
+        Guid questionId,
+        AddAnswerDto addAnswerDto,
+        CancellationToken cancellationToken)
+    {
+        var validationResult = await _addAnswerDtoValidator.ValidateAsync(addAnswerDto, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return validationResult.ToErrors();
+        }
+
+        var usersRatingResult = await _usersCommunicationService.GetUserRatingAsync(addAnswerDto.UserId, cancellationToken);
+        if (usersRatingResult.IsFailure)
+        {
+            return usersRatingResult.Error;
+        }
+
+        if (usersRatingResult.Value <= 0)
+        {
+            _logger.LogError("User with id {userId} has no rating", addAnswerDto.UserId);
+            return Errors.Questions.NotEnoughRating();
+        }
+
+        var transaction = await _transactionManager.BeginTransactionAsync(cancellationToken);
+
+        (_, bool isFailure, Question? question, Failure? error) = await _questionsRepository.GetByIdAsync(questionId, cancellationToken);
+        if (isFailure)
+        {
+            return error;
+        }
+
+        var answer = new Answer(Guid.NewGuid(), addAnswerDto.UserId, addAnswerDto.Text, questionId);
+
+        question.Answers.Add(answer);
+
+        await _questionsRepository.SaveAsync(question, cancellationToken);
+
+        transaction.Commit();
+
+        _logger.LogInformation("Answer added with id {answerId} to question {questionId}", answer.Id, questionId);
+
+        return answer.Id;
+    }
 }
 
 public class QuestionCalculator
