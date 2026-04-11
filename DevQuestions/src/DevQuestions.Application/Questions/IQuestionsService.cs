@@ -1,8 +1,10 @@
-﻿using DevQuestions.Contracts.Questions;
+﻿using CSharpFunctionalExtensions;
+using DevQuestions.Contracts.Questions;
+using Shared;
 
 namespace DevQuestions.Application.Questions;
 
 public interface IQuestionsService
 {
-    Task<Guid> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken);
+    Task<Result<Guid, Failure>> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken);
 }

@@ -1,7 +1,7 @@
-﻿using DevQuestions.Application.Extensions;
+﻿using CSharpFunctionalExtensions;
+using DevQuestions.Application.Extensions;
 using DevQuestions.Application.FullTextSearch;
 using DevQuestions.Application.Questions.Fails;
-using DevQuestions.Application.Questions.Fails.Exceptions;
 using DevQuestions.Contracts.Questions;
 using DevQuestions.Domain.Questions;
 using FluentValidation;
@@ -29,13 +29,24 @@ public class QuestionsService : IQuestionsService
         _validator = validator;
     }
 
-    public async Task<Guid> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken)
+    public async Task<Result<Guid, Failure>> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken)
     {
         // Валидация входных данных
         var validationResult = await _validator.ValidateAsync(questionDto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            throw new QuestionValidationException(validationResult.ToErrors());
+            _logger.LogWarning("Validation failed for question creation by user {UserId}. Errors: {Errors}",
+                questionDto.UserId, string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
+            return validationResult.ToErrors();
+        }
+
+        var calculator = new QuestionCalculator();
+
+        var calculateResult = calculator.Calculate();
+        if (calculateResult.IsFailure)
+        {
+            _logger.LogError("Calculation failed for question creation by user {UserId}", questionDto.UserId);
+            return calculateResult.Error;
         }
 
         // Валидация бизнес логики
@@ -44,11 +55,14 @@ public class QuestionsService : IQuestionsService
 
         if (openedUserQuestionsCount > 3)
         {
-            throw new ToManyQuestionsException();
+            _logger.LogWarning("User {UserId} has too many open questions ({Count}). Maximum allowed is 3",
+                questionDto.UserId, openedUserQuestionsCount);
+            return Errors.Questions.ToManyQuestions().ToFailure();
         }
 
-        // Создание сущнноости Question
+        // Создание сущности Question
         var questionId = Guid.NewGuid();
+
         var question = new Question(
             questionId,
             questionDto.Title,
@@ -56,26 +70,13 @@ public class QuestionsService : IQuestionsService
             questionDto.UserId,
             null,
             questionDto.TagIds);
-
-        // Сохранение сущности Question в базе данных
         await _questionsRepository.AddAsync(question, cancellationToken);
 
-        await _searchProvider.IndexQuestionAsync(question);
-
-        // Логировние об успешном неуспешном схранении
         _logger.LogInformation("Question created with id {questionId}", questionId);
 
         return questionId;
     }
 
-    // public async Task<IActionResult> Update(
-    //     Guid questionId,
-    //     UpdateQuestionDto request,
-    //     CancellationToken cancellationToken)
-    // {
-    //
-    // }
-    //
     // public async Task<IActionResult> Delete(Guid questionId, CancellationToken cancellationToken)
     // {
     //
@@ -97,3 +98,12 @@ public class QuestionsService : IQuestionsService
     //
     // }
 }
+
+public class QuestionCalculator
+    {
+        public Result<int, Failure> Calculate()
+        {
+            // operation
+            return Error.Failure("", "").ToFailure();
+        }
+    }
