@@ -1,4 +1,4 @@
-﻿using DevQuestions.Application.Questions.Abstractions;
+﻿using DevQuestions.Application.Abstractions;
 using DevQuestions.Application.Questions.Dtos;
 
 namespace DevQuestions.Application.Questions.Features.GetQuestionsWithFiltersQuery;

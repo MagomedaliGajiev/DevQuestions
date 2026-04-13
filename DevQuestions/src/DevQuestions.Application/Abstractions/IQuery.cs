@@ -1,4 +1,4 @@
-﻿namespace DevQuestions.Application.Questions.Abstractions;
+﻿namespace DevQuestions.Application.Abstractions;
 
 public interface IQuery;
 

@@ -1,4 +1,5 @@
 ﻿using DevQuestions.Application;
+using DevQuestions.Infrastructure.Communication;
 using DevQuestions.Infrastructure.ElasticSearch;
 using DevQuestions.Infrastructure.Postgres;
 
@@ -11,7 +12,8 @@ public static class DependencyInjection
             .AddWebDependencies()
             .AddApplication()
             .AddPostgresInfrastructure()
-            .AddElasticSearchInfrastructure();
+            .AddElasticSearchInfrastructure()
+            .AddCommunicationInfrastructure();
 
     private static IServiceCollection AddWebDependencies(this IServiceCollection services)
     {
