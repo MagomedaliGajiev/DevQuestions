@@ -1,6 +1,4 @@
-﻿using System.Transactions;
-using DevQuestions.Application.Abstractions;
-using DevQuestions.Application.Database;
+﻿using DevQuestions.Application.Abstractions;
 using DevQuestions.Application.Questions;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;

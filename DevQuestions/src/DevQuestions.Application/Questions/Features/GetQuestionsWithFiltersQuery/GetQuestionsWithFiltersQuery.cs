@@ -3,4 +3,4 @@ using DevQuestions.Application.Questions.Dtos;
 
 namespace DevQuestions.Application.Questions.Features.GetQuestionsWithFiltersQuery;
 
-public record GetQuestionsWithFiltersQuery(GetQuestionsDto Dto) : IQuery;
+public record GetQuestionsWithFiltersQuery(GetQuestionsDto Dto) : IQueryHandler;
