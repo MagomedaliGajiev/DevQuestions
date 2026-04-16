@@ -1,7 +1,6 @@
 using DevQuestions.Application.Abstractions;
 using DevQuestions.Application.Questions.Features.AddAnswer;
 using DevQuestions.Application.Questions.Features.CreateQuestion;
-using DevQuestions.Contracts.Questions;
 using DevQuestions.Contracts.Questions.Dtos;
 using DevQuestions.Presenters.ResponseExtensions;
 using Microsoft.AspNetCore.Mvc;
