@@ -1,8 +1,9 @@
 ﻿using DevQuestions.Domain.Tags;
 
-namespace DevQuestions.Application.Tags;
-
-public interface ITagsReadDbContext
+namespace DevQuestions.Application.Tags
 {
-    IQueryable<Tag> TagsRead { get; }
+    public interface ITagsReadDbContext
+    {
+        IQueryable<Tag> TagsRead { get; }
+    }
 }

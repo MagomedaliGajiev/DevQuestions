@@ -6,58 +6,59 @@ using DevQuestions.Contracts.Questions.Responses;
 using DevQuestions.Domain.Questions;
 using Microsoft.EntityFrameworkCore;
 
-namespace DevQuestions.Application.Questions.Features.GetQuestionsWithFiltersQuery;
-
-public class GetQuestionsWithFilters : IQueryHandler<QuestionResponse, GetQuestionsWithFiltersQuery>
+namespace DevQuestions.Application.Questions.Features.GetQuestionsWithFiltersQuery
 {
-    private readonly IFilesProvider _filesProvider;
-    private readonly ITagsReadDbContext _tagsReadDbContext;
-    private readonly IQuestionsReadDbContext _questionsDbContext;
-
-    public GetQuestionsWithFilters(
-        IFilesProvider filesProvider,
-        ITagsReadDbContext tagsReadDbContext,
-        IQuestionsReadDbContext questionsDbContext)
+    public class GetQuestionsWithFilters : IQueryHandler<QuestionResponse, GetQuestionsWithFiltersQuery>
     {
-        _filesProvider = filesProvider;
-        _tagsReadDbContext = tagsReadDbContext;
-        _questionsDbContext = questionsDbContext;
-    }
+        private readonly IFilesProvider _filesProvider;
+        private readonly ITagsReadDbContext _tagsReadDbContext;
+        private readonly IQuestionsReadDbContext _questionsDbContext;
 
-    public async Task<QuestionResponse> Handle(
-        GetQuestionsWithFiltersQuery query, CancellationToken cancellationToken)
-    {
-        var questions = await _questionsDbContext.ReadQuestions
-            .Include(q => q.Solution)
-            .Skip(query.Dto.Page * query.Dto.PageSize)
-            .Take(query.Dto.PageSize)
-            .ToListAsync(cancellationToken);
+        public GetQuestionsWithFilters(
+            IFilesProvider filesProvider,
+            ITagsReadDbContext tagsReadDbContext,
+            IQuestionsReadDbContext questionsDbContext)
+        {
+            _filesProvider = filesProvider;
+            _tagsReadDbContext = tagsReadDbContext;
+            _questionsDbContext = questionsDbContext;
+        }
 
-        long count = await _questionsDbContext.ReadQuestions.LongCountAsync(cancellationToken);
+        public async Task<QuestionResponse> Handle(
+            GetQuestionsWithFiltersQuery query, CancellationToken cancellationToken)
+        {
+            var questions = await _questionsDbContext.ReadQuestions
+                .Include(q => q.Solution)
+                .Skip(query.Dto.Page * query.Dto.PageSize)
+                .Take(query.Dto.PageSize)
+                .ToListAsync(cancellationToken);
 
-        var screenshotIds = questions
-            .Where(q => q.ScreenshotId is not null)
-            .Select(q => q.ScreenshotId!.Value);
+            long count = await _questionsDbContext.ReadQuestions.LongCountAsync(cancellationToken);
 
-        var filesDict = await _filesProvider.GetUrlsByIdsAsync(screenshotIds, cancellationToken);
+            var screenshotIds = questions
+                .Where(q => q.ScreenshotId is not null)
+                .Select(q => q.ScreenshotId!.Value);
 
-        var questionTags = questions.SelectMany(q => q.Tags);
+            var filesDict = await _filesProvider.GetUrlsByIdsAsync(screenshotIds, cancellationToken);
 
-        var tags = await _tagsReadDbContext.TagsRead
-            .Where(t => questionTags.Contains(t.Id))
-            .Select(t => t.Name)
-            .ToListAsync(cancellationToken);
+            var questionTags = questions.SelectMany(q => q.Tags);
 
-        var questionsDto = questions.Select(q => new QuestionDto(
-            q.Id,
-            q.Title,
-            q.Text,
-            q.UserId,
-            q.ScreenshotId is not null ? filesDict[q.ScreenshotId.Value] : null,
-            q.Solution?.Id,
-            tags,
-            q.Status.ToRussianString()));
+            var tags = await _tagsReadDbContext.TagsRead
+                .Where(t => questionTags.Contains(t.Id))
+                .Select(t => t.Name)
+                .ToListAsync(cancellationToken);
 
-        return new QuestionResponse(questionsDto, count);
+            var questionsDto = questions.Select(q => new QuestionDto(
+                q.Id,
+                q.Title,
+                q.Text,
+                q.UserId,
+                q.ScreenshotId is not null ? filesDict[q.ScreenshotId.Value] : null,
+                q.Solution?.Id,
+                tags,
+                q.Status.ToRussianString()));
+
+            return new QuestionResponse(questionsDto, count);
+        }
     }
 }

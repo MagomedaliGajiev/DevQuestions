@@ -2,24 +2,27 @@
 using DevQuestions.Infrastructure.Communication;
 using DevQuestions.Infrastructure.ElasticSearch;
 using DevQuestions.Infrastructure.Postgres;
+using DevQuestions.Infrastructure.S3;
 
-namespace DevQuestions.Web;
-
-public static class DependencyInjection
+namespace DevQuestions.Web
 {
-    public static IServiceCollection AddProgramDependencies(this IServiceCollection services) =>
-        services
-            .AddWebDependencies()
-            .AddApplication()
-            .AddPostgresInfrastructure()
-            .AddElasticSearchInfrastructure()
-            .AddCommunicationInfrastructure();
-
-    private static IServiceCollection AddWebDependencies(this IServiceCollection services)
+    public static class DependencyInjection
     {
-        services.AddControllers();
-        services.AddOpenApi();
+        public static IServiceCollection AddProgramDependencies(this IServiceCollection services) =>
+            services
+                .AddWebDependencies()
+                .AddApplication()
+                .AddPostgresInfrastructure()
+                .AddElasticSearchInfrastructure()
+                .AddCommunicationInfrastructure()
+                .AddS3Infrastructure();
 
-        return services;
+        private static IServiceCollection AddWebDependencies(this IServiceCollection services)
+        {
+            services.AddControllers();
+            services.AddOpenApi();
+
+            return services;
+        }
     }
 }

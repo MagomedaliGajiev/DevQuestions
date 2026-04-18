@@ -1,24 +1,25 @@
-﻿namespace DevQuestions.Domain.Reports;
-
-public enum ReportStatus
+﻿namespace DevQuestions.Domain.Reports
 {
-    /// <summary>
-    /// Статус открыт.
-    /// </summary>
-    OPEN,
+    public enum ReportStatus
+    {
+        /// <summary>
+        /// Статус открыт.
+        /// </summary>
+        OPEN,
 
-    /// <summary>
-    /// Статус в раблоте.
-    /// </summary>
-    IN_PROGRESS,
+        /// <summary>
+        /// Статус в раблоте.
+        /// </summary>
+        IN_PROGRESS,
 
-    /// <summary>
-    /// Статус решен.
-    /// </summary>
-    RESOLVED,
+        /// <summary>
+        /// Статус решен.
+        /// </summary>
+        RESOLVED,
 
-    /// <summary>
-    /// Статус закрыт.
-    /// </summary>
-    DISMISSED,
+        /// <summary>
+        /// Статус закрыт.
+        /// </summary>
+        DISMISSED,
+    }
 }

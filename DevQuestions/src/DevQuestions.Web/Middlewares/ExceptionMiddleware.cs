@@ -2,55 +2,56 @@
 using DevQuestions.Application.Exceptions;
 using Shared;
 
-namespace DevQuestions.Web.Middlewares;
-
-public class ExceptionMiddleware
+namespace DevQuestions.Web.Middlewares
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionMiddleware> _logger;
-
-    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+    public class ExceptionMiddleware
     {
-        _next = next;
-        _logger = logger;
-    }
+        private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionMiddleware> _logger;
 
-    public async Task InvokeAsync(HttpContext httpContext)
-    {
-        try
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
-            await _next(httpContext);
+            _next = next;
+            _logger = logger;
         }
-        catch (Exception ex)
+
+        public async Task InvokeAsync(HttpContext httpContext)
         {
-            await HandleExceptionAsync(httpContext, ex);
+            try
+            {
+                await _next(httpContext);
+            }
+            catch (Exception ex)
+            {
+                await HandleExceptionAsync(httpContext, ex);
+            }
+        }
+
+        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
+
+            (int code, Error[]? errors) = exception switch
+            {
+                BadRequestException => (
+                    StatusCodes.Status500InternalServerError, JsonSerializer.Deserialize<Error[]>(exception.Message)),
+
+                NotFoundException => (
+                    StatusCodes.Status404NotFound, JsonSerializer.Deserialize<Error[]>(exception.Message)),
+
+                _ => (StatusCodes.Status500InternalServerError, [Error.Failure(null, "Something went wrong")])
+            };
+
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = code;
+
+            await context.Response.WriteAsJsonAsync(errors);
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    public static class ExceptionMiddlewareExtension
     {
-        _logger.LogError(exception, exception.Message);
-
-        (int code, Error[]? errors) = exception switch
-        {
-            BadRequestException => (
-                StatusCodes.Status500InternalServerError, JsonSerializer.Deserialize<Error[]>(exception.Message)),
-
-            NotFoundException => (
-                StatusCodes.Status404NotFound, JsonSerializer.Deserialize<Error[]>(exception.Message)),
-
-            _ => (StatusCodes.Status500InternalServerError, [Error.Failure(null, "Something went wrong")])
-        };
-
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = code;
-
-        await context.Response.WriteAsJsonAsync(errors);
+        public static IApplicationBuilder UseExceptionMiddleware(this WebApplication app) =>
+            app.UseMiddleware<ExceptionMiddleware>();
     }
-}
-
-public static class ExceptionMiddlewareExtension
-{
-    public static IApplicationBuilder UseExceptionMiddleware(this WebApplication app) =>
-        app.UseMiddleware<ExceptionMiddleware>();
 }

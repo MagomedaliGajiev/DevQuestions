@@ -17,6 +17,7 @@
       <ProjectReference Include="..\DevQuestions.Infrastructure.Communication\DevQuestions.Infrastructure.Communication.csproj" />
       <ProjectReference Include="..\DevQuestions.Infrastructure.ElasticSearch\DevQuestions.Infrastructure.ElasticSearch.csproj" />
       <ProjectReference Include="..\DevQuestions.Infrastructure.Postgres\DevQuestions.Infrastructure.Postgres.csproj" />
+      <ProjectReference Include="..\DevQuestions.Infrastructure.S3\DevQuestions.Infrastructure.S3.csproj" />
       <ProjectReference Include="..\DevQuestions.Presenters\DevQuestions.Presenters.csproj" />
     </ItemGroup>
 

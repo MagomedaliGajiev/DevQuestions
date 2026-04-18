@@ -2,11 +2,12 @@
 using DevQuestions.Domain.Questions;
 using Shared;
 
-namespace DevQuestions.Application.FullTextSearch;
-
-public interface ISearchProvider
+namespace DevQuestions.Application.FullTextSearch
 {
-    Task<List<Guid>> SearchAsync(string query);
+    public interface ISearchProvider
+    {
+        Task<List<Guid>> SearchAsync(string query);
 
-    Task<UnitResult<Failure>> IndexQuestionAsync(Question question);
+        Task<UnitResult<Failure>> IndexQuestionAsync(Question question);
+    }
 }

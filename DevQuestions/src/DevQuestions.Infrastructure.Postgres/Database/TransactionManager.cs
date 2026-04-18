@@ -1,21 +1,22 @@
 ﻿using System.Data;
 using DevQuestions.Application.Database;
 
-namespace DevQuestions.Infrastructure.Postgres.Database;
-
-public class TransactionManager : ITransactionManager
+namespace DevQuestions.Infrastructure.Postgres.Database
 {
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
-
-    public TransactionManager(ISqlConnectionFactory sqlConnectionFactory)
+    public class TransactionManager : ITransactionManager
     {
-        _sqlConnectionFactory = sqlConnectionFactory;
-    }
+        private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
-    public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
-    {
-        var connection = _sqlConnectionFactory.Create();
-        connection.Open();
-        return connection.BeginTransaction();
+        public TransactionManager(ISqlConnectionFactory sqlConnectionFactory)
+        {
+            _sqlConnectionFactory = sqlConnectionFactory;
+        }
+
+        public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
+        {
+            var connection = _sqlConnectionFactory.Create();
+            connection.Open();
+            return connection.BeginTransaction();
+        }
     }
 }

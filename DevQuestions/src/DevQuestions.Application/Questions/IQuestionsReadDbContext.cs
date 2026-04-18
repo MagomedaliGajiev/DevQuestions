@@ -1,8 +1,9 @@
 ﻿using DevQuestions.Domain.Questions;
 
-namespace DevQuestions.Application.Questions;
-
-public interface IQuestionsReadDbContext
+namespace DevQuestions.Application.Questions
 {
-    IQueryable<Question> ReadQuestions { get; }
+    public interface IQuestionsReadDbContext
+    {
+        IQueryable<Question> ReadQuestions { get; }
+    }
 }

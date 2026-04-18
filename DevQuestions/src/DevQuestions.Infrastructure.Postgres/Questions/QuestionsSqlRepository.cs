@@ -5,45 +5,46 @@ using DevQuestions.Application.Questions;
 using DevQuestions.Domain.Questions;
 using Shared;
 
-namespace DevQuestions.Infrastructure.Postgres.Questions;
-
-public class QuestionsSqlRepository : IQuestionsRepository
+namespace DevQuestions.Infrastructure.Postgres.Questions
 {
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
-
-    public QuestionsSqlRepository(ISqlConnectionFactory sqlConnectionFactory)
+    public class QuestionsSqlRepository : IQuestionsRepository
     {
-        _sqlConnectionFactory = sqlConnectionFactory;
-    }
+        private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
-    public async Task<Guid> AddAsync(Question question, CancellationToken cancellationToken)
-    {
-        const string sql = """
-                           INSERT INTO questions (id, title, text, user_id, screenshot_id, tags, status)
-                           VALUES (@Id, @Title, @Text, @UserId, @ScreenshotId, @Tags, @Status)
-                           """;
-        using var connection = _sqlConnectionFactory.Create();
-
-        await connection.ExecuteAsync(sql, new
+        public QuestionsSqlRepository(ISqlConnectionFactory sqlConnectionFactory)
         {
-            Id = question.Id,
-            Title = question.Title,
-            Text = question.Text,
-            UserId = question.UserId,
-            ScreenshotId = question.ScreenshotId,
-            Tags = question.Tags.ToArray(),
-            Status = question.Status,
-        });
+            _sqlConnectionFactory = sqlConnectionFactory;
+        }
 
-        return question.Id;
+        public async Task<Guid> AddAsync(Question question, CancellationToken cancellationToken)
+        {
+            const string sql = """
+                               INSERT INTO questions (id, title, text, user_id, screenshot_id, tags, status)
+                               VALUES (@Id, @Title, @Text, @UserId, @ScreenshotId, @Tags, @Status)
+                               """;
+            using var connection = _sqlConnectionFactory.Create();
+
+            await connection.ExecuteAsync(sql, new
+            {
+                Id = question.Id,
+                Title = question.Title,
+                Text = question.Text,
+                UserId = question.UserId,
+                ScreenshotId = question.ScreenshotId,
+                Tags = question.Tags.ToArray(),
+                Status = question.Status,
+            });
+
+            return question.Id;
+        }
+
+        public Task<Guid> SaveAsync(Question question, CancellationToken cancellationToken) => throw new NotImplementedException();
+
+        public Task<Guid> DeleteAsync(Guid questionId, CancellationToken cancellationToken) => throw new NotImplementedException();
+
+        public Task<Result<Question, Failure>> GetByIdAsync(Guid questionId, CancellationToken cancellationToken) => throw new NotImplementedException();
+
+        public Task<int> GetOpenedUserQuestionsAsync(Guid userId, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task<int> GetOpenUserQuestionsAsync(Guid userId, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
-
-    public Task<Guid> SaveAsync(Question question, CancellationToken cancellationToken) => throw new NotImplementedException();
-
-    public Task<Guid> DeleteAsync(Guid questionId, CancellationToken cancellationToken) => throw new NotImplementedException();
-
-    public Task<Result<Question, Failure>> GetByIdAsync(Guid questionId, CancellationToken cancellationToken) => throw new NotImplementedException();
-
-    public Task<int> GetOpenedUserQuestionsAsync(Guid userId, CancellationToken cancellationToken) => throw new NotImplementedException();
-    public Task<int> GetOpenUserQuestionsAsync(Guid userId, CancellationToken cancellationToken) => throw new NotImplementedException();
 }

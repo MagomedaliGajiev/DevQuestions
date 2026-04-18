@@ -1,8 +1,9 @@
 ﻿using System.Data;
 
-namespace DevQuestions.Application.Database;
-
-public interface ITransactionManager
+namespace DevQuestions.Application.Database
 {
-    Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken);
+    public interface ITransactionManager
+    {
+        Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken);
+    }
 }

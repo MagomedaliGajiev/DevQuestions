@@ -1,6 +1,8 @@
-﻿namespace DevQuestions.Application.Questions.Features.SelectSolution;
+﻿namespace DevQuestions.Application.Questions.Features.SelectSolutionCommand
+{
+}
 
-    // public record SelectSolutionCommand() : ICommand;
+// public record SelectSolutionCommand() : ICommand;
     //
     // public class SelectSolutionHandler : ICommandHandler<Guid, SelectSolutionCommand>
     // {
