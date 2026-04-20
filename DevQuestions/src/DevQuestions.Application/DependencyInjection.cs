@@ -1,17 +1,33 @@
-﻿using DevQuestions.Application.Questions;
+﻿using DevQuestions.Application.Abstractions;
+using DevQuestions.Application.Questions;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DevQuestions.Application;
-
-public static class DependencyInjection
+namespace DevQuestions.Application
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static class DependencyInjection
     {
-        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+        public static IServiceCollection AddApplication(this IServiceCollection services)
+        {
+            services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
-        services.AddScoped<IQuestionsService, QuestionsService>();
+            services.AddScoped<IQuestionsService, QuestionsService>();
 
-        return services;
+            var assembly = typeof(DependencyInjection).Assembly;
+
+            services.Scan(scan => scan.FromAssemblies(assembly)
+                .AddClasses(classes => classes
+                    .AssignableToAny(typeof(ICommandHandler<,>), typeof(ICommandHandler<>)))
+                .AsSelfWithInterfaces()
+                .WithScopedLifetime());
+
+            services.Scan(scan => scan.FromAssemblies(assembly)
+                .AddClasses(classes => classes
+                    .AssignableToAny(typeof(IQueryHandler<,>)))
+                .AsSelfWithInterfaces()
+                .WithScopedLifetime());
+
+            return services;
+        }
     }
 }

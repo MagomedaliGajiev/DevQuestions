@@ -1,14 +1,15 @@
 ﻿using DevQuestions.Application.FullTextSearch;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DevQuestions.Infrastructure.ElasticSearch;
-
-public static class DependencyInjection
+namespace DevQuestions.Infrastructure.ElasticSearch
 {
-    public static IServiceCollection AddElasticSearchInfrastructure(this IServiceCollection services)
+    public static class DependencyInjection
     {
-        services.AddSingleton<ISearchProvider, ElasticSearchProvider>();
+        public static IServiceCollection AddElasticSearchInfrastructure(this IServiceCollection services)
+        {
+            services.AddSingleton<ISearchProvider, ElasticSearchProvider>();
 
-        return services;
+            return services;
+        }
     }
 }

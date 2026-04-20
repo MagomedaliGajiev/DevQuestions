@@ -1,20 +1,21 @@
-﻿using DevQuestions.Infrastructure.Postgres.Seeders;
+﻿using DevQuestions.Infrastructure.Postgres;
 
-namespace DevQuestions.Web.Seeders;
-
-public static class SeederExtensions
+namespace DevQuestions.Web.Seeders
 {
-    public static async Task<WebApplication> UseSeeders(this WebApplication app)
+    public static class SeederExtensions
     {
-        using var scope = app.Services.CreateAsyncScope();
-
-        var seeders = scope.ServiceProvider.GetServices<ISeeder>();
-
-        foreach (var seeder in seeders)
+        public static async Task<WebApplication> UseSeeders(this WebApplication app)
         {
-            await seeder.SeedAsync();
-        }
+            using var scope = app.Services.CreateAsyncScope();
 
-        return app;
+            var seeders = scope.ServiceProvider.GetServices<ISeeder>();
+
+            foreach (var seeder in seeders)
+            {
+                await seeder.SeedAsync();
+            }
+
+            return app;
+        }
     }
 }
