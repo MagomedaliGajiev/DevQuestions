@@ -1,6 +1,9 @@
 ﻿using Questions.Application;
 using Questions.Infrastructure.Postgres;
 using Questions.Presenters;
+using Tags;
+using Tags.Contracts;
+using Tags.Presenters;
 
 namespace Web;
 
@@ -11,7 +14,9 @@ public static class DependencyInjection
             .AddWebDependencies()
             .AddApplication()
             .AddPostgresInfrastructure()
-            .AddQuestionsModule();
+            .AddQuestionsModule()
+            .AddTagsModule()
+            .AddScoped<ITagsContract, TagsModuleContract>();
 
     private static IServiceCollection AddWebDependencies(this IServiceCollection services)
     {

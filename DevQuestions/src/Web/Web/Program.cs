@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddProgramDependencies();
 
+
 builder.Services.AddEndpoints(TagsAssembly.Assembly);
 
 var app = builder.Build();

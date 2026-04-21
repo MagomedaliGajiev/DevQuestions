@@ -16,6 +16,7 @@
       <ProjectReference Include="..\..\Questions\Questions.Application\Questions.Application.csproj" />
       <ProjectReference Include="..\..\Questions\Questions.Infrastructure.Postgres\Questions.Infrastructure.Postgres.csproj" />
       <ProjectReference Include="..\..\Questions\Questions.Presenters\Questions.Presenters.csproj" />
+      <ProjectReference Include="..\..\Tags\Tags.Presenters\Tags.Presenters.csproj" />
       <ProjectReference Include="..\..\Tags\Tags\Tags.csproj" />
     </ItemGroup>
 
