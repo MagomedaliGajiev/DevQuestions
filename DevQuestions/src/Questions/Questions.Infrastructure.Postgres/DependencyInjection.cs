@@ -10,8 +10,8 @@ namespace Questions.Infrastructure.Postgres;
         {
             services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
             services.AddScoped<IQuestionsRepository, QuestionsSqlRepository>();
-           // services.AddScoped<ITransactionManager, TransactionManager>();
-                // services.AddScoped<ITagsReadDbContext, TagsReadDbContext>();
+            services.AddScoped<ITransactionManager, TransactionManager>();
+            // services.AddScoped<ITagsReadDbContext, TagsReadDbContext>();
             services.AddScoped<IQuestionsReadDbContext, QuestionsReadDbContext>();
 
             return services;

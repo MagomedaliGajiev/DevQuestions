@@ -4,6 +4,7 @@ using Questions.Application.Features.CreateQuestionCommand;
 using Questions.Application.Features.GetQuestionsWithFiltersQuery;
 using Questions.Contracts.Dtos;
 using Questions.Contracts.Responses;
+using Questions.Presenters.ResponseExtensions;
 using Shared.Abstractions;
 
 namespace Questions.Presenters;
