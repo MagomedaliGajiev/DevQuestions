@@ -1,5 +1,6 @@
 ﻿using Questions.Application;
 using Questions.Infrastructure.Postgres;
+using Questions.Presenters;
 
 namespace Web;
 
@@ -9,10 +10,8 @@ public static class DependencyInjection
         services
             .AddWebDependencies()
             .AddApplication()
-            .AddPostgresInfrastructure();
-    //    .AddElasticSearchInfrastructure()
-    //    .AddCommunicationInfrastructure()
-    //     .AddS3Infrastructure();
+            .AddPostgresInfrastructure()
+            .AddQuestionsModule();
 
     private static IServiceCollection AddWebDependencies(this IServiceCollection services)
     {

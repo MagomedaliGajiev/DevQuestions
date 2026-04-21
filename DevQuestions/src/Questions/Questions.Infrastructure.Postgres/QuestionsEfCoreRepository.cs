@@ -10,26 +10,26 @@ namespace Questions.Infrastructure.Postgres;
 
 public class QuestionsEfCoreRepository : IQuestionsRepository
 {
-    private readonly QuestionsReadDbContext _readDbContext;
+    private readonly QuestionsDbContext _dbContext;
 
-    public QuestionsEfCoreRepository(QuestionsReadDbContext readDbContext)
+    public QuestionsEfCoreRepository(QuestionsDbContext dbContext)
     {
-        _readDbContext = readDbContext;
+        _dbContext = dbContext;
     }
 
     public async Task<Guid> AddAsync(Question question, CancellationToken cancellationToken)
     {
-        await _readDbContext.Questions.AddAsync(question, cancellationToken);
+        await _dbContext.Questions.AddAsync(question, cancellationToken);
 
-        await _readDbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         return question.Id;
     }
 
     public async Task<Guid> SaveAsync(Question question, CancellationToken cancellationToken)
     {
-        _readDbContext.Questions.Attach(question);
-        await _readDbContext.SaveChangesAsync(cancellationToken);
+        _dbContext.Questions.Attach(question);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         return question.Id;
     }
@@ -38,7 +38,7 @@ public class QuestionsEfCoreRepository : IQuestionsRepository
 
     public async Task<Result<Question, Failure>> GetByIdAsync(Guid questionId, CancellationToken cancellationToken)
     {
-        var question = await _readDbContext.Questions
+        var question = await _dbContext.Questions
             .Include(q => q.Answers)
             .Include(q => q.Solution)
             .FirstOrDefaultAsync(q => q.Id == questionId, cancellationToken);

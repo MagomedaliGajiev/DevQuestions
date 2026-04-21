@@ -11,6 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Core\Framework\Framework.csproj" />
+      <ProjectReference Include="..\..\Core\Infrastructure\Infrastructure.ElasticSearch\Infrastructure.ElasticSearch.csproj" />
       <ProjectReference Include="..\..\Core\Infrastructure\Infrastructure.S3\Infrastructure.S3.csproj" />
       <ProjectReference Include="..\..\Core\Shared\Shared.csproj" />
       <ProjectReference Include="..\Questions.Application\Questions.Application.csproj" />

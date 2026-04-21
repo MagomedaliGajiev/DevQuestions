@@ -4,22 +4,24 @@ using Questions.Contracts.Responses;
 using Questions.Domain;
 using Shared.Abstractions;
 using Shared.FilesStorage;
+using Tags.Contracts;
+using Tags.Contracts.Dtos;
 
 namespace Questions.Application.Features.GetQuestionsWithFiltersQuery;
 
 public class GetQuestionsWithFilters : IQueryHandler<QuestionResponse, GetQuestionsWithFiltersQuery>
 {
     private readonly IFilesProvider _filesProvider;
-    // private readonly ITagsReadDbContext _tagsReadDbContext;
+    private readonly ITagsContract _tagsContract;
     private readonly IQuestionsReadDbContext _questionsDbContext;
 
     public GetQuestionsWithFilters(
         IFilesProvider filesProvider,
-        // ITagsReadDbContext tagsReadDbContext,
+        ITagsContract tagsContract,
         IQuestionsReadDbContext questionsDbContext)
     {
         _filesProvider = filesProvider;
-        // _tagsReadDbContext = tagsReadDbContext;
+        _tagsContract = tagsContract;
         _questionsDbContext = questionsDbContext;
     }
 
@@ -42,10 +44,7 @@ public class GetQuestionsWithFilters : IQueryHandler<QuestionResponse, GetQuesti
 
         var questionTags = questions.SelectMany(q => q.Tags);
 
-        // var tags = await _tagsReadDbContext.TagsRead
-        //     .Where(t => questionTags.Contains(t.Id))
-        //     .Select(t => t.Name)
-        //     .ToListAsync(cancellationToken);
+        var tags = await _tagsContract.GetByIds(new GetByIdsDto(questionTags.ToArray()));
 
         var questionsDto = questions.Select(q => new QuestionDto(
             q.Id,
@@ -54,7 +53,7 @@ public class GetQuestionsWithFilters : IQueryHandler<QuestionResponse, GetQuesti
             q.UserId,
             q.ScreenshotId is not null ? filesDict[q.ScreenshotId.Value] : null,
             q.Solution?.Id,
-            [],
+            tags.Select(t => t.Name),
             q.Status.ToRussianString()));
 
         return new QuestionResponse(questionsDto, count);
