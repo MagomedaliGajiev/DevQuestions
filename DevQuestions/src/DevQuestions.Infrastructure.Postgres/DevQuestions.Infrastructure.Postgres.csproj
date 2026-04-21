@@ -8,6 +8,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DevQuestions.Application\DevQuestions.Application.csproj" />
+      <ProjectReference Include="..\Questions\Questions.Application\Questions.Application.csproj" />
+      <ProjectReference Include="..\Questions\Questions.Infrastructure.Postgres\Questions.Infrastructure.Postgres.csproj" />
     </ItemGroup>
 
     <ItemGroup>

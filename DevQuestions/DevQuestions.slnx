@@ -5,14 +5,30 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/DevQuestions.Application/DevQuestions.Application.csproj" />
-    <Project Path="src/DevQuestions.Contracts/DevQuestions.Contracts.csproj" />
     <Project Path="src/DevQuestions.Domain/DevQuestions.Domain.csproj" />
     <Project Path="src/DevQuestions.Infrastructure.Communication/DevQuestions.Infrastructure.Communication.csproj" />
-    <Project Path="src/DevQuestions.Infrastructure.ElasticSearch/DevQuestions.Infrastructure.ElasticSearch.csproj" />
     <Project Path="src/DevQuestions.Infrastructure.Postgres/DevQuestions.Infrastructure.Postgres.csproj" />
-    <Project Path="src/DevQuestions.Infrastructure.S3/DevQuestions.Infrastructure.S3.csproj" />
     <Project Path="src/DevQuestions.Presenters/DevQuestions.Presenters.csproj" />
-    <Project Path="src/DevQuestions.Web/DevQuestions.Web.csproj" />
-    <Project Path="src/Shared/Shared.csproj" />
+    <Project Path="src/Web/Web/Web.csproj" />
   </Folder>
+  <Folder Name="/src/Comments/">
+    <Project Path="src/Comments/Comments/Comments.csproj" />
+  </Folder>
+  <Folder Name="/src/Core/" />
+  <Folder Name="/src/Core/Infrastructure/">
+    <Project Path="src/Core/Infrastructure/Infrastructure.ElasticSearch/Infrastructure.ElasticSearch.csproj" />
+    <Project Path="src/Core/Infrastructure/Infrastructure.S3/Infrastructure.S3.csproj" />
+    <Project Path="src/Core/Shared/Shared.csproj" />
+  </Folder>
+  <Folder Name="/src/Questions/">
+    <Project Path="src/Questions/Questions.Application/Questions.Application.csproj" />
+    <Project Path="src/Questions/Questions.Contracts/Questions.Contracts.csproj" />
+    <Project Path="src/Questions/Questions.Domain/Questions.Domain.csproj" />
+    <Project Path="src/Questions/Questions.Infrastructure.Postgres/Questions.Infrastructure.Postgres.csproj" />
+    <Project Path="src/Questions/Questions.Presenters/Questions.Presenters.csproj" />
+  </Folder>
+  <Folder Name="/src/Reports/">
+    <Project Path="src/Reports/Reports/Reports.csproj" />
+  </Folder>
+  <Folder Name="/src/Tags/" />
 </Solution>

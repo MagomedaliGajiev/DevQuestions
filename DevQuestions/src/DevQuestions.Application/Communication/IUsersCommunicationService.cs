@@ -1,10 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
 using Shared;
 
-namespace DevQuestions.Application.Communication
+namespace DevQuestions.Application.Communication;
+
+public interface IUsersCommunicationService
 {
-    public interface IUsersCommunicationService
-    {
-        Task<Result<long, Failure>> GetUserRatingAsync(Guid userId, CancellationToken cancellationToken = default);
-    }
+    Task<Result<long, Failure>> GetUserRatingAsync(Guid userId, CancellationToken cancellationToken = default);
 }
