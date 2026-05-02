@@ -1,17 +1,8 @@
-﻿using CSharpFunctionalExtensions;
+﻿using MediatR;
 
 namespace Shared.Abstractions;
 
-public interface ICommandHandler;
+public interface ICommand<out TResponse> : IRequest<TResponse>;
 
-public interface ICommandHandler<TResponse, in TCommand>
-    where TCommand : ICommandHandler
-{
-    Task<Result<TResponse, Failure>> Handle(TCommand command, CancellationToken cancellationToken);
-}
-
-public interface ICommandHandler<in TCommand>
-    where TCommand : ICommandHandler
-{
-    Task<UnitResult<Failure>> Handle(TCommand command, CancellationToken cancellationToken);
-}
+public interface ICommandHandler<in TCommand, TResponse> : IRequestHandler<TCommand, TResponse>
+    where TCommand : ICommand<TResponse>;
