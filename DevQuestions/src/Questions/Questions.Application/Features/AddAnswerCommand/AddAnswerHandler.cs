@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
-using Questions.Application.Fails;
 using Questions.Contracts.Dtos;
 using Questions.Domain;
 using Shared;
