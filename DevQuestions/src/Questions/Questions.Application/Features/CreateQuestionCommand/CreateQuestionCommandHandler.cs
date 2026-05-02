@@ -1,8 +1,6 @@
-﻿using CSharpFunctionalExtensions;
-using FluentValidation;
+using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
 using Questions.Application.Fails;
-using Questions.Contracts.Dtos;
 using Questions.Domain;
 using Shared;
 using Shared.Abstractions;
@@ -14,29 +12,17 @@ public class CreateQuestionCommandHandler : ICommandHandler<CreateQuestionComman
 {
     private readonly IQuestionsRepository _questionsRepository;
     private readonly ILogger<QuestionsService> _logger;
-    private readonly IValidator<CreateQuestionDto> _validator;
 
     public CreateQuestionCommandHandler(
         IQuestionsRepository questionsRepository,
-        ILogger<QuestionsService> logger,
-        IValidator<CreateQuestionDto> validator)
+        ILogger<QuestionsService> logger)
     {
         _questionsRepository = questionsRepository;
         _logger = logger;
-        _validator = validator;
     }
 
     public async Task<Result<Guid, Failure>> Handle(CreateQuestionCommand command, CancellationToken cancellationToken)
     {
-        // Валидация входных данных
-        var validationResult = await _validator.ValidateAsync(command.QuestionDto, cancellationToken);
-        if (!validationResult.IsValid)
-        {
-            _logger.LogWarning("Validation failed for question creation by user {UserId}. Errors: {Errors}",
-                command.QuestionDto.UserId, string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
-            return validationResult.ToErrors();
-        }
-
         var calculator = new QuestionCalculator();
 
         var calculateResult = calculator.Calculate();

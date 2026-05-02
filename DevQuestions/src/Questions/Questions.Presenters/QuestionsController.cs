@@ -1,3 +1,4 @@
+using Framework.ResponseExtensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Questions.Application.Features.AddAnswerCommand;
@@ -23,7 +24,9 @@ public class QuestionsController : ControllerBase
 
         var result = await sender.Send(command, cancellationToken);
 
-        return Ok(result);
+        return result.IsFailure
+            ? result.Error.ToResponse()
+            : Ok(result.Value);
     }
 
     [HttpGet]
@@ -79,6 +82,9 @@ public class QuestionsController : ControllerBase
         var command = new AddAnswerCommand(questionId, request);
 
         var result = await sender.Send(command, cancellationToken);
-        return Ok(result);
+
+        return result.IsFailure
+            ? result.Error.ToResponse()
+            : Ok(result.Value);
     }
 }

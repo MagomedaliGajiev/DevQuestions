@@ -1,12 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
-using FluentValidation;
 using Microsoft.Extensions.Logging;
-using Questions.Contracts.Dtos;
 using Questions.Domain;
 using Shared;
 using Shared.Abstractions;
 using Shared.Database;
-using Shared.Extensions;
 
 namespace Questions.Application.Features.AddAnswerCommand;
 
@@ -15,20 +12,17 @@ public class AddAnswerCommandHandler : ICommandHandler<AddAnswerCommand, Result<
     private readonly IQuestionsRepository _questionsRepository;
     private readonly ITransactionManager _transactionManager;
     // private readonly IUsersCommunicationService _usersCommunicationService;
-    private readonly IValidator<AddAnswerDto> _validator;
     private readonly ILogger<QuestionsService> _logger;
 
     public AddAnswerCommandHandler(
         IQuestionsRepository questionsRepository,
         ITransactionManager transactionManager,
         // IUsersCommunicationService usersCommunicationService,
-        ILogger<QuestionsService> logger,
-        IValidator<AddAnswerDto> validator)
+        ILogger<QuestionsService> logger)
     {
         _questionsRepository = questionsRepository;
         _transactionManager = transactionManager;
         // _usersCommunicationService = usersCommunicationService;
-        _validator = validator;
         _logger = logger;
     }
 
@@ -36,12 +30,6 @@ public class AddAnswerCommandHandler : ICommandHandler<AddAnswerCommand, Result<
         AddAnswerCommand command,
         CancellationToken cancellationToken)
     {
-        var validationResult = await _validator.ValidateAsync(command.AddAnswerDto, cancellationToken);
-        if (!validationResult.IsValid)
-        {
-            return validationResult.ToErrors();
-        }
-
         // var usersRatingResult = await _usersCommunicationService.GetUserRatingAsync(commandHandler.AddAnswerDto.UserId, cancellationToken);
         // if (usersRatingResult.IsFailure)
         // {

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Questions.Application.Behaviors;
 
 namespace Questions.Application;
 
@@ -9,13 +10,12 @@ public static class DependencyInjection
     {
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
-        services.AddScoped<IQuestionsService, QuestionsService>();
-
         var assembly = typeof(DependencyInjection).Assembly;
 
         services.AddMediatR(c =>
         {
             c.RegisterServicesFromAssemblies(assembly);
+            c.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
 
     //     services.Scan(scan => scan.FromAssemblies(assembly)

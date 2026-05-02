@@ -1,21 +1,20 @@
-﻿using FluentValidation;
-using Questions.Contracts.Dtos;
+using FluentValidation;
 
 namespace Questions.Application.Features.CreateQuestionCommand;
 
-public class CreateQuestionValidator : AbstractValidator<CreateQuestionDto>
+public class CreateQuestionValidator : AbstractValidator<CreateQuestionCommand>
 {
     public CreateQuestionValidator()
     {
-        RuleFor(x => x.Title)
+        RuleFor(x => x.QuestionDto.Title)
             .NotEmpty().WithMessage("Заголовок не долженн быть пустым.")
             .MaximumLength(500)
             .WithMessage("Заголовок невалидный.");
 
-        RuleFor(x => x.Text)
+        RuleFor(x => x.QuestionDto.Text)
             .NotEmpty().WithMessage("Текст не может быть пустым.")
             .MaximumLength(5000).WithMessage("Текст невалидный.");
 
-        RuleFor(x => x.UserId).NotEmpty();
+        RuleFor(x => x.QuestionDto.UserId).NotEmpty();
     }
 }

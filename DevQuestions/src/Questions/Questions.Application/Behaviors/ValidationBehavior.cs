@@ -1,15 +1,13 @@
-﻿using CSharpFunctionalExtensions;
 using FluentValidation;
 using MediatR;
 using Shared;
-using Shared.Abstractions;
 using Shared.Extensions;
 
 namespace Questions.Application.Behaviors;
 
 public sealed class ValidationBehavior<TRequest, TResponse>
-    : IPipelineBehavior<TRequest, Result<TResponse, Failure>>
-    where TRequest : ICommand<Result<TResponse, Failure>>
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -18,27 +16,40 @@ public sealed class ValidationBehavior<TRequest, TResponse>
         _validators = validators;
     }
 
-    public async Task<Result<TResponse, Failure>> Handle(
+    public async Task<TResponse> Handle(
         TRequest request,
-        RequestHandlerDelegate<Result<TResponse, Failure>> next,
+        RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
+        if (!_validators.Any())
+        {
+            return await next();
+        }
+
         var context = new ValidationContext<TRequest>(request);
 
-        var validationFailures = await Task.WhenAll(
+        var validationResults = await Task.WhenAll(
             _validators.Select(validator => validator.ValidateAsync(context, cancellationToken)));
 
-        var errors = validationFailures
+        var failed = validationResults
             .Where(result => !result.IsValid)
             .ToList();
 
-        if (errors.Count != 0)
+        if (failed.Count == 0)
         {
-            return errors.ToErrors();
+            return await next();
         }
 
-        var response = await next();
+        Failure failure = failed.ToErrors();
 
-        return response;
+        // TResponse — это Result<X, Failure>; используем неявное преобразование Failure -> Result<X, Failure>.
+        var implicitOp = typeof(TResponse).GetMethod("op_Implicit", [typeof(Failure)]);
+        if (implicitOp is null)
+        {
+            throw new InvalidOperationException(
+                $"ValidationBehavior cannot map validation failure to {typeof(TResponse)}.");
+        }
+
+        return (TResponse)implicitOp.Invoke(null, [failure])!;
     }
 }
