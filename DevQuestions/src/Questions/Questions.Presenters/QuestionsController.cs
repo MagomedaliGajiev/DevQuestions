@@ -15,11 +15,11 @@ public class QuestionsController : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Create(
-        [FromServices] ICommandHandler<Guid, CreateQuestionCommandHandler> commandHandler,
+        [FromServices] ICommandHandler<Guid, CreateQuestionCommand> commandHandler,
         [FromBody] CreateQuestionDto request,
         CancellationToken cancellationToken)
     {
-        var command = new CreateQuestionCommandHandler(request);
+        var command = new CreateQuestionCommand(request);
 
         var result = await commandHandler.Handle(command, cancellationToken);
         return result.IsFailure ? result.Error.ToResponse() : Ok(result.Value);
@@ -70,12 +70,12 @@ public class QuestionsController : ControllerBase
 
     [HttpPost("{questionId:guid}/answers")]
     public async Task<IActionResult> AddAnswer(
-        [FromServices] ICommandHandler<Guid, AddAnswerCommandHandler> commandHandler,
+        [FromServices] ICommandHandler<Guid, AddAnswerCommand> commandHandler,
         [FromRoute] Guid questionId,
         [FromBody] AddAnswerDto request,
         CancellationToken cancellationToken)
     {
-        var command = new AddAnswerCommandHandler(questionId, request);
+        var command = new AddAnswerCommand(questionId, request);
 
         var result = await commandHandler.Handle(command, cancellationToken);
         return result.IsFailure ? result.Error.ToResponse() : Ok(result.Value);
