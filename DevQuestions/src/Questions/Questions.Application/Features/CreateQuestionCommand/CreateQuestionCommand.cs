@@ -3,4 +3,4 @@ using Shared.Abstractions;
 
 namespace Questions.Application.Features.CreateQuestionCommand;
 
-public record CreateQuestionCommand(CreateQuestionDto QuestionDto) : ICommandHandler;
+public record CreateQuestionCommand(CreateQuestionDto QuestionDto) : ICommand;
