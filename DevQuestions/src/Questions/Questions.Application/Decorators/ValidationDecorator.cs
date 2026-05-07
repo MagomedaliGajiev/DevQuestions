@@ -101,7 +101,7 @@ public class ValidationDecorator<TResponse, TCommand> : ICommandHandler<TRespons
             _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
 
         var failures = validationResults
-            .Where(f => f != null)
+            .Where(f => !f.IsValid)
             .ToList();
 
         if (failures.Count > 0)

@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Questions.Application.Fails;
 using Questions.Application.FullTextSearch;
@@ -7,15 +6,12 @@ using Questions.Contracts.Dtos;
 using Questions.Domain;
 using Shared;
 using Shared.Database;
-using Shared.Extensions;
 
 namespace Questions.Application;
 
 public class QuestionsService : IQuestionsService
 {
     private readonly IQuestionsRepository _questionsRepository;
-    private readonly IValidator<CreateQuestionDto> _createQuestionDtoValidator;
-    private readonly IValidator<AddAnswerDto> _addAnswerDtoValidator;
     private readonly ISearchProvider _searchProvider;
     private readonly ILogger<QuestionsService> _logger;
     private readonly ITransactionManager _transactionManager;
@@ -23,29 +19,18 @@ public class QuestionsService : IQuestionsService
 
     public QuestionsService(
         IQuestionsRepository questionsRepository,
-        IValidator<CreateQuestionDto> createQuestionDtoValidator,
         ISearchProvider searchProvider,
-        ILogger<QuestionsService> logger, IValidator<AddAnswerDto> addAnswerDtoValidator, ITransactionManager transactionManager)
+        ILogger<QuestionsService> logger,
+        ITransactionManager transactionManager)
     {
         _questionsRepository = questionsRepository;
         _logger = logger;
         _searchProvider = searchProvider;
-        _createQuestionDtoValidator = createQuestionDtoValidator;
-        _addAnswerDtoValidator = addAnswerDtoValidator;
         _transactionManager = transactionManager;
     }
 
     public async Task<Result<Guid, Failure>> Create(CreateQuestionDto questionDto, CancellationToken cancellationToken)
     {
-        // Валидация входных данных
-        var validationResult = await _createQuestionDtoValidator.ValidateAsync(questionDto, cancellationToken);
-        if (!validationResult.IsValid)
-        {
-            _logger.LogWarning("Validation failed for question creation by user {UserId}. Errors: {Errors}",
-                questionDto.UserId, string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
-            return validationResult.ToErrors();
-        }
-
         var calculator = new QuestionCalculator();
 
         var calculateResult = calculator.Calculate();
@@ -101,12 +86,6 @@ public class QuestionsService : IQuestionsService
         AddAnswerDto addAnswerDto,
         CancellationToken cancellationToken)
     {
-        var validationResult = await _addAnswerDtoValidator.ValidateAsync(addAnswerDto, cancellationToken);
-        if (!validationResult.IsValid)
-        {
-            return validationResult.ToErrors();
-        }
-
         // var usersRatingResult = await _usersCommunicationService.GetUserRatingAsync(addAnswerDto.UserId, cancellationToken);
         // if (usersRatingResult.IsFailure)
         //  {
