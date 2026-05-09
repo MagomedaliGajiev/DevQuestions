@@ -11,11 +11,11 @@
   </Folder>
   <Folder Name="/src/Core/">
     <Project Path="src/Core/Framework/Framework.csproj" />
+    <Project Path="src/Core/Shared/Shared.csproj" />
   </Folder>
   <Folder Name="/src/Core/Infrastructure/">
     <Project Path="src/Core/Infrastructure/Infrastructure.ElasticSearch/Infrastructure.ElasticSearch.csproj" />
     <Project Path="src/Core/Infrastructure/Infrastructure.S3/Infrastructure.S3.csproj" />
-    <Project Path="src/Core/Shared/Shared.csproj" />
   </Folder>
   <Folder Name="/src/Questions/">
     <Project Path="src/Questions/Questions.Application/Questions.Application.csproj" />
