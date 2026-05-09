@@ -1,10 +1,12 @@
-using Framework.ResponseExtensions;
+using CSharpFunctionalExtensions;
+using Framework.EndpointResults;
 using Microsoft.AspNetCore.Mvc;
 using Questions.Application.Features.AddAnswerCommand;
 using Questions.Application.Features.CreateQuestionCommand;
 using Questions.Application.Features.GetQuestionsWithFiltersQuery;
 using Questions.Contracts.Dtos;
 using Questions.Contracts.Responses;
+using Shared;
 using Shared.Abstractions;
 
 namespace Questions.Presenters;
@@ -14,7 +16,7 @@ namespace Questions.Presenters;
 public class QuestionsController : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Create(
+    public async Task<EndpointResult<Guid>> Create(
         [FromServices] ICommandHandler<Guid, CreateQuestionCommand> commandHandler,
         [FromBody] CreateQuestionDto request,
         CancellationToken cancellationToken)
@@ -22,11 +24,12 @@ public class QuestionsController : ControllerBase
         var command = new CreateQuestionCommand(request);
 
         var result = await commandHandler.Handle(command, cancellationToken);
-        return result.IsFailure ? result.Error.ToResponse() : Ok(result.Value);
+
+        return new EndpointResult<Guid>(result);
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(
+    public async Task<EndpointResult<QuestionResponse>> Get(
         [FromServices] IQueryHandler<QuestionResponse, GetQuestionsWithFiltersQuery> queryHandler,
         [FromQuery] GetQuestionsDto request,
         CancellationToken cancellationToken)
@@ -35,41 +38,41 @@ public class QuestionsController : ControllerBase
 
         var result = await queryHandler.Handle(query, cancellationToken);
 
-        return Ok(result);
+        return new EndpointResult<QuestionResponse>(Result.Success<QuestionResponse, Failure>(result));
     }
 
     [HttpGet("{questionId:guid}")]
-    public async Task<IActionResult> GetById([FromRoute] Guid questionId, CancellationToken cancellationToken)
+    public Task<EndpointResult<string>> GetById([FromRoute] Guid questionId, CancellationToken cancellationToken)
     {
-        return Ok("Questions get");
+        return Task.FromResult(new EndpointResult<string>(Result.Success<string, Failure>("Questions get")));
     }
 
     [HttpPut("{questionId:guid}")]
-    public async Task<IActionResult> Update(
+    public Task<EndpointResult<string>> Update(
         [FromRoute] Guid questionId,
         [FromBody] UpdateQuestionDto request,
         CancellationToken cancellationToken)
     {
-        return Ok("Question updated");
+        return Task.FromResult(new EndpointResult<string>(Result.Success<string, Failure>("Question updated")));
     }
 
     [HttpDelete("{questionId:guid}")]
-    public async Task<IActionResult> Delete([FromRoute] Guid questionId, CancellationToken cancellationToken)
+    public Task<EndpointResult<string>> Delete([FromRoute] Guid questionId, CancellationToken cancellationToken)
     {
-        return Ok("Question deleted");
+        return Task.FromResult(new EndpointResult<string>(Result.Success<string, Failure>("Question deleted")));
     }
 
     [HttpPut("{questionId:guid}/solution")]
-    public async Task<IActionResult> SelectSolution(
+    public Task<EndpointResult<string>> SelectSolution(
         [FromRoute] Guid questionId,
         [FromQuery] Guid answerId,
         CancellationToken cancellationToken)
     {
-        return Ok("Solutions selected");
+        return Task.FromResult(new EndpointResult<string>(Result.Success<string, Failure>("Solutions selected")));
     }
 
     [HttpPost("{questionId:guid}/answers")]
-    public async Task<IActionResult> AddAnswer(
+    public async Task<EndpointResult<Guid>> AddAnswer(
         [FromServices] ICommandHandler<Guid, AddAnswerCommand> commandHandler,
         [FromRoute] Guid questionId,
         [FromBody] AddAnswerDto request,
@@ -78,6 +81,7 @@ public class QuestionsController : ControllerBase
         var command = new AddAnswerCommand(questionId, request);
 
         var result = await commandHandler.Handle(command, cancellationToken);
-        return result.IsFailure ? result.Error.ToResponse() : Ok(result.Value);
+
+        return new EndpointResult<Guid>(result);
     }
 }
